@@ -18,7 +18,7 @@ class InsertionOrder extends Migration
             $table->id();
             $table->integer('internal_id');
             $table->tinyInteger('client_id');
-            $table->tinyInteger('contact_id');
+            $table->tinyInteger('contact_id')->default(0);
             $table->tinyInteger('sales_rep_id');
             $table->string('name',50)->nullable();
             $table->char('type',1)->default('c');
@@ -26,7 +26,7 @@ class InsertionOrder extends Migration
             $table->integer('quantity');
             $table->string('notes',255)->nullable();
             $table->tinyInteger('active')->unsigned()->default(1);
-            $table->timestamp('added', 0);
+            $table->timestamps();
         });
     }
 

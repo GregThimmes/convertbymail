@@ -25,9 +25,9 @@ class Company extends Migration
             $table->integer('phone')->nullable();
             $table->integer('fax')->nullable();
             $table->string('website',100)->nullable();
-            $table->timestamp('added', 0);
             $table->tinyInteger('active')->unsigned()->default(1);
             $table->float('o_rate');
+            $table->timestamps();
         });
     }
 

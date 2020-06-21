@@ -30,7 +30,8 @@
             <div class="card-body">
               <div class="row">
                   <div class="col-md-12">
-                    <form method="POST" action="{{ action('CampaignController@store') }}">
+                    <form method="POST" action="{{ action('CampaignLinkController@store') }}">
+              
                     {{ csrf_field() }}
                     
                     <div class="table-responsive">
@@ -50,7 +51,8 @@
                                         <td>http://convertbymail.com/campaign_page.php?c={{ $link->campaign_id }}~{{ $link->link_id }}</td>
                                         <td>
                                           <div class="form-group">
-                                            <input type="number" class="form-control" name="total" id="total-field" required>
+                                            <input type="number" class="form-control" name="links[{{$link->campaign_id}}][total]" value="{{$link->total}}" id="total-field" required>
+                                            <input type="hidden" name="links[{{$link->campaign_id}}][primary_id]" value="{{$link->id}}">
                                           </div>
                                         </td>
                                         </tr>
@@ -60,7 +62,9 @@
                               </table>
                             </div>
                           </div>
-
+                           <div class="form-group">
+                       <button type="submit" class="btn btn-success btn-submit">Update Links</button>
+                    </div>
                     </form>
                 </div>
               </div>
@@ -68,10 +72,5 @@
           </div>
         </div>
       </div>
-
     </div>
-
 @endsection
-@push('js')
-
-@endpush

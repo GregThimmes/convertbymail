@@ -19,8 +19,8 @@ class CampaignLink extends Migration
             $table->integer('campaign_id')->unsigned();
             $table->integer('link_id')->unsigned();
             $table->string('link',512);
-            $table->integer('clicks')->unsigned();
-            $table->integer('total')->unsigned();
+            $table->integer('clicks')->unsigned()->default(0);
+            $table->integer('total')->unsigned()->default(0);
             $table->timestamps();
         });
     }

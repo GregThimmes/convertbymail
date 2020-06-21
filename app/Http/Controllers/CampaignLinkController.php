@@ -29,9 +29,16 @@ class CampaignLinkController extends Controller
     public function store(Request $request)
     {
        
-        $input = $request->all();
-        $campaign = Campaign::create($input);
-        return view('admin/campaignLink/'.$campaign->id);
+        foreach($request->get('links') AS $link)
+        {
+
+            $total = $link['total'];
+            $link = \App\CampaignLink::find($link['primary_id']);
+            $link->total = $total;
+            $link->save();
+        }
+
+        return redirect('admin/campaign');
     }
 
 }

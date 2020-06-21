@@ -7,6 +7,6 @@ class Company extends Model
 {
     protected $table = 'company';
     protected $fillable = [
-        'id','name'];
+        'id','name','address','address2','city','state','zip','phone','active'];
 
 }

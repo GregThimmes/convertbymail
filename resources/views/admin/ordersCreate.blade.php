@@ -1,7 +1,7 @@
 @extends('layouts.app', [
-    'namePage' => 'Create Campaign',
+    'namePage' => 'Create Order',
     'class' => '',
-    'activePage' => 'campaignCreate',
+    'activePage' => 'orderCreate',
   ])
 
 @section('content')
@@ -11,7 +11,7 @@
         <div class="header-body">
           <div class="row align-items-center py-4">
             <div class="col-lg-6 col-7">
-              <h6 class="h2 text-white d-inline-block mb-0">Create New Campaign</h6>
+              <h6 class="h2 text-white d-inline-block mb-0">Create New Order</h6>
             </div>
           </div>
         </div>
@@ -37,7 +37,7 @@
                           @endphp
                       </div>
                       @endif
-                  <form method="POST" action="{{ action('CampaignController@store') }}">
+                  <form method="POST" action="{{ action('InsertionOrderController@store') }}">
                     {{ csrf_field() }}
                     <div class="form-group">
                       <label for="client">Client <span class="text-red">*</span></label>
@@ -61,43 +61,58 @@
                       </select>
                     </div>
                     <div class="form-group">
-                      <label for="io">IO <span class="text-red">*</span></label>
-                      <select class="form-control" id="io_id" name="io_id" required>
-                          <option value="">Company Is Required</option>
-                         
-                      </select>
+                      <label for="quantity">ID <span class="text-red">*</span></label>
+                      <input type="number" class="form-control" name="internal_id" id="internal-field" required>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="exampleFormControlSelect1">Name <span class="text-red">*</span></label>
+                      <input type="text" class="form-control" name="name" id="name-field" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="exampleFormControlSelect1">Type<span class="text-red">*</span></label>
+                        <div class="form-check">
+                          <input class="form-check-input" type="radio" name="type" id="cpc-field" value="c" checked>
+                          <label class="form-check-label" for="cpc">
+                            CPC
+                          </label>
+                        </div>
+                        <div class="form-check">
+                          <input class="form-check-input" type="radio" name="type" id="cpm-field" value="m">
+                          <label class="form-check-label" for="cpm">
+                            CPM
+                          </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="exampleFormControlSelect1">Status<span class="text-red">*</span></label>
+                        <div class="form-check">
+                          <input class="form-check-input" type="radio" name="status" id="open-field" value="c" checked>
+                          <label class="form-check-label" for="cpc">
+                            Open
+                          </label>
+                        </div>
+                        <div class="form-check">
+                          <input class="form-check-input" type="radio" name="status" id="closed-field" value="m">
+                          <label class="form-check-label" for="cpm">
+                            Closed
+                          </label>
+                        </div>
                     </div>
                     
                     <div class="form-group">
-                      <label for="example-date-input" class="form-control-label">Broadcast Date <span class="text-red">*</span></label>
-                      <input class="form-control" type="date" name="broadcast_date" value="" id="date-input" required>
-                    </div>
-                    <div class="form-group">
-                      <label for="exampleFormControlSelect1">Campaign Name <span class="text-red">*</span></label>
-                      <input type="text" class="form-control" name="name" id="name-field" required>
-                    </div>
-                    <div class="form-group">
-                      <label for="quantity">Quantity <span class="text-red">*</span></label>
+                      <label for="SubjectLine">Quantity <span class="text-red">*</span></label>
                       <input type="number" class="form-control" name="quantity" id="quantity-field" required>
                     </div>
                     <div class="form-group">
-                      <label for="exampleFormControlSelect1">Friendly From <span class="text-red">*</span></label>
-                      <input type="email" class="form-control" name="friendly_from" id="from-field" required>
-                    </div>
-                    <div class="form-group">
-                      <label for="SubjectLine">Subject Line <span class="text-red">*</span></label>
-                      <input type="text" class="form-control" name="subject_line" id="subject-field" required>
-                    </div>
-                    <div class="form-group">
-                      <label for="exampleFormControlSelect1">Notes <span class="text-red">*</span></label>
+                      <label for="exampleFormControlSelect1">Notes</label>
                       <input type="text" class="form-control" name="notes" id="notes-field">
                     </div>
+          
                     <div class="form-group">
-                      <label for="exampleFormControlTextarea1">Creative</label>
-                      <textarea class="form-control" name="creative_o" id="creative-input" rows="10" required></textarea>
-                    </div>
-                    <div class="form-group">
-                       <button type="submit" class="btn btn-success btn-submit">Create Campaign</button>
+                       <button type="submit" class="btn btn-success btn-submit">Create Order</button>
                     </div>
                   </form>
                 </div>
@@ -106,36 +121,5 @@
           </div>
         </div>
       </div>
-
     </div>
-
 @endsection
-@push('js')
-
-<script type="text/javascript" charset="utf-8">
-jQuery(document).ready(function (){
-    jQuery('select[name="client_id"]').on('change',function(){
-        var companyID = jQuery(this).val();
-        if(companyID)
-        {
-            jQuery.ajax({
-                url : '../../ajax/company/insertionorder?id=' +companyID,
-                type : "GET",
-                dataType : "json",
-                success:function(data)
-                {
-                    jQuery('select[name="io_id"]').empty();
-                    jQuery.each(data, function(key,value){
-                        $('select[name="io_id"]').append('<option value="'+ value.id +'">'+ value.name +'</option>');
-                    });
-                }
-            });
-        }
-        else
-        {
-            $('select[name="io"]').empty();
-        }
-    });
-});
-</script>
-@endpush

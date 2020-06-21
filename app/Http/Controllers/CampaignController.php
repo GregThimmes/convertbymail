@@ -33,7 +33,45 @@ class CampaignController extends Controller
     public function create()
     {
         $companies = \App\Company::all();
-        return view('admin/campaignCreate')->with('companies',$companies);
+        $sales_reps = \App\User::where('level','>=', 1)->get(); 
+        return view('admin/campaignCreate')->with('companies',$companies)->with('sales_reps',$sales_reps);
+    }
+
+    public function edit($id)
+    {
+        $campaign = \App\Campaign::find($id);
+        $companies = \App\Company::all();
+        $sales_reps = \App\User::where('level','>=', 1)->get();
+        $orders = \App\InsertionOrder::where('client_id',$campaign->client_id)->get();
+
+        return view('admin/campaignEdit')->with('campaign',$campaign)->with('companies',$companies)->with('sales_reps',$sales_reps)->with('orders',$orders);
+
+    }
+
+    public function update(Request $request)
+    {
+        $campaign = \App\Campaign::find($request->get('id'));
+        $campaign->client_id = $request->get('client_id');
+        $campaign->io_id = $request->get('io_id');
+        $campaign->broadcast_date = $request->get('broadcast_date');
+        $campaign->name = $request->get('name');
+        $campaign->quantity = $request->get('quantity');
+        $campaign->subject_line = $request->get('subject_line');
+        $campaign->friendly_from = $request->get('friendly_from');
+        $campaign->creative_o = $request->get('creative_o');
+        $campaign->notes = $request->get('notes');
+        $campaign->save();
+
+        //Delete all the links, we need to reprocess
+
+        $campaignLink = \App\CampaignLink::where('campaign_id', $campaign->id)->delete();
+
+        $creativeProcess = $this->processCreative($request->get('creative_o'), $campaign->id);
+
+
+        return redirect('admin/campaign/links/'.$campaign->id);
+    
+
     }
 
     public function store(Request $request)
@@ -74,7 +112,7 @@ class CampaignController extends Controller
 
         $creativeProcess = $this->processCreative($input['creative_o'], $campaign->id);
     
-        return view('admin/campaignLink/'.$campaign->id);
+        return redirect('admin/campaign/links/'.$campaign->id);
     }
 
     function processCreative($creative, $id)

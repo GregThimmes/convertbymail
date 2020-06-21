@@ -11,10 +11,10 @@
         <div class="header-body">
           <div class="row align-items-center py-4">
             <div class="col-lg-6 col-7">
-              <h6 class="h2 text-white d-inline-block mb-0">Campaigns</h6>
+              <h6 class="h2 text-white d-inline-block mb-0">Orders</h6>
             </div>
             <div class="col-lg-6 col-5 text-right">
-              <a href="{{ route('campaign-create') }}" class="btn btn-sm btn-neutral">Create New Campaign</a>
+              <a href="orders/create" class="btn btn-sm btn-neutral">Create New Order</a>
             </div>
           </div>
         </div>
@@ -34,41 +34,39 @@
               <table id="datatable" class="table align-items-center table-light table-flush" cellspacing="0" width="100%">
               <thead class="thead-light">
                 <tr>
+                  <th>Internal IO</th>
                   <th>Name</th>
-                  <th>Open Rate</th>
-                  <th>URL</th>
+                  <th>Type</th>
                   <th>Status</th>
+                  <th>Quantity</th>
+                  <th>Active</th>
                   <th>Action</th>
                 </tr>
               </thead>
               <tbody class="list">
-              @foreach ($campaigns as $campaign)
+              @foreach ($orders as $order)
                 <tr>
                    <td>
-                      <a href="http://convertbymail.com/adtrack/viewCreative.php?c={{ $campaign->id }}" target="_blank">{{ $campaign->name }}</a>
+                      {{ $order->internal_id }}
                   </td>
                    <td>
-                      {{ $campaign->o_rate }}
+                      {{ $order->name }}
                   </td>
                    <td>
-                      http://convertbymail.com/process.php?c={{ $campaign->id }}
+                      {{ $order->type === 'c' ? "CPC" : "CPM" }}
                   </td>
                   <td>
-                    {{ $campaign->active === 1 ? "Active" : "Inactive" }}
+                    {{ $order->status === 'o' ? "Open" : "Closed" }}
+                  </td>
+                   <td>
+                      {{ $order->quantity }}
+                  </td>
+                  <td>
+                    {{ $order->active === 1 ? "Active" : "Inactive" }}
                   </td>
                   <td class="">
-
-                        <div class="dropdown">
-                            <a class="btn btn-sm btn-icon-only text-light" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-ellipsis-v"></i>
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
-                                <a class="dropdown-item" href="../admin/campaign/edit/{{$campaign->id}}">Edit Campaign</a>
-                                <a class="dropdown-item" href="../admin/campaign/links/{{$campaign->id}}">Edit Campaign Links</a>
-                                <a class="dropdown-item" href="#">Edit Creative</a>
-                            </div>
-                        </div>
-                    </td>
+                    <a class="dropdown-item" href="./orders/edit/{{$order->id}}">Edit Order</a>   
+                  </td>
               @endforeach                    
               </tbody>
             </table>

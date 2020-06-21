@@ -40,8 +40,9 @@
   height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <!-- End Google Tag Manager (noscript) -->
   <div class="main-content" id="panel">
+
     @auth
-      @include('layouts.page_template.auth')
+     @include('layouts.page_template.auth')
     @endauth
     @guest
       @include('layouts.page_template.guest')
