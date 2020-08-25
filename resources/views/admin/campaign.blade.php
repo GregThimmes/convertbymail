@@ -65,7 +65,7 @@
                             <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
                                 <a class="dropdown-item" href="../admin/campaign/edit/{{$campaign->id}}">Edit Campaign</a>
                                 <a class="dropdown-item" href="../admin/campaign/links/{{$campaign->id}}">Edit Campaign Links</a>
-                                <a class="dropdown-item" href="#">Edit Creative</a>
+                                <a class="dropdown-item" href="../admin/creative/edit/{{$campaign->id}}">Edit Creative</a>
                             </div>
                         </div>
                     </td>

@@ -1,5 +1,5 @@
 @extends('layouts.app', [
-    'namePage' => 'Create Campaign',
+    'namePage' => 'Edit Campaign Cretive',
     'class' => '',
     'activePage' => 'campaignCreative',
   ])
@@ -11,10 +11,7 @@
         <div class="header-body">
           <div class="row align-items-center py-4">
             <div class="col-lg-6 col-7">
-              <h6 class="h2 text-white d-inline-block mb-0">Campaigns</h6>
-            </div>
-            <div class="col-lg-6 col-5 text-right">
-              <a href="#" class="btn btn-sm btn-neutral">Create New Campaign</a>
+              <h6 class="h2 text-white d-inline-block mb-0">Edit Campaign Creative {{ $campaign->name }}</h6>
             </div>
           </div>
         </div>
@@ -26,57 +23,37 @@
       <!-- Dark table -->
       <div class="row">
         <div class="col">
-          <div class="card bg-default shadow">
-            <div class="card-header  border-0">
-              
+          <div class="card shadow">
+            <div class="card-header border-0">
             </div>
-            <div class="table-responsive">
-              <table id="datatable" class="table align-items-center table-light table-flush" cellspacing="0" width="100%">
-              <thead class="thead-light">
-                <tr>
-                  <th>Name</th>
-                  <th>Open Rate</th>
-                  <th>URL</th>
-                  <th>Status</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody class="list">
-              @foreach ($campaigns as $campaign)
-                <tr>
-                   <td>
-                      <a href="http://convertbymail.com/adtrack/viewCreative.php?c={{ $campaign->id }}" target="_blank">{{ $campaign->name }}</a>
-                  </td>
-                   <td>
-                      {{ $campaign->o_rate }}
-                  </td>
-                   <td>
-                      http://convertbymail.com/process.php?c={{ $campaign->id }}
-                  </td>
-                  <td>
-                    {{ $campaign->active === 1 ? "Active" : "Inactive" }}
-                  </td>
-                  <td class="">
-
-                        <div class="dropdown">
-                            <a class="btn btn-sm btn-icon-only text-light" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-ellipsis-v"></i>
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
-                                <a class="dropdown-item" href="#">Edit Campaign</a>
-                                <a class="dropdown-item" href="#">Edit Campaign Links</a>
-                                <a class="dropdown-item" href="#">Edit Creative</a>
-                            </div>
-                        </div>
-                    </td>
-              @endforeach                    
-              </tbody>
-            </table>
+            <div class="card-body">
+              <div class="row">
+                  <div class="col-md-6">
+                    @if(Session::has('success'))
+                      <div class="alert alert-success">
+                          {{ Session::get('success') }}
+                          @php
+                              Session::forget('success');
+                          @endphp
+                      </div>
+                      @endif
+                  <form method="POST" action="{{ action('CampaignController@updateCreative') }}">
+                    {{ csrf_field() }}
+                    <input type="hidden" name="id" value="{{$campaign->id}}"/>
+                    <div class="form-group">
+                      <label for="exampleFormControlTextarea1">Creative</label>
+                      <textarea class="form-control" name="creative_o" id="creative-input" rows="10" required>{{$campaign->creative}}</textarea>
+                    </div>
+                    <div class="form-group">
+                       <button type="submit" class="btn btn-success btn-submit">Update Campaign Creative</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
     </div>
-
 @endsection

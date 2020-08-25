@@ -41,6 +41,9 @@ Route::group(['middleware' => 'auth'], function () {
 				Route::get('campaign/view/{id}', 'CampaignController@view')->name('campaign-view');
 				Route::get('campaign/edit/{id}', 'CampaignController@edit')->name('campaign-edit');
 				Route::post('campaign/update', 'CampaignController@update')->name('campaign-update');
+				Route::get('creative/edit/{id}', 'CampaignController@editCreative')->name('creative-edit');
+				Route::post('creative/edit/{id}', 'CampaignController@updateCreative')->name('creative-update');
+
 
 				Route::get('campaign/links/{id}', 'CampaignLinkController@index')->name('campaign-link');
 				Route::post('campaign/links/store', 'CampaignLinkController@store')->name('campaign-link-store');

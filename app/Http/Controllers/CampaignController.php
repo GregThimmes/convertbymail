@@ -115,6 +115,26 @@ class CampaignController extends Controller
         return redirect('admin/campaign/links/'.$campaign->id);
     }
 
+
+    function editCreative($id)
+    {
+        $campaign = \App\Campaign::find($id);
+        return view('admin/campaignCreative')->with('campaign',$campaign);
+    }
+
+    function updateCreative(Request $request)
+    {
+        $campaign = \App\Campaign::find($request->get('id'));
+        $campaign->creative_o = $request->get('creative_o');
+        $campaign->save();
+
+        //Delete all the links, we need to reprocess
+        $campaignLink = \App\CampaignLink::where('campaign_id', $campaign->id)->delete();
+        $creativeProcess = $this->processCreative($request->get('creative_o'), $campaign->id);
+
+        return redirect('admin/campaign/links/'.$campaign->id);
+    }
+
     function processCreative($creative, $id)
     {
     
