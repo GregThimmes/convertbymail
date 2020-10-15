@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Cookie;
 use Illuminate\Support\Facades\Http;
+use Auth;
 
 
 class AdKernalController extends Controller
@@ -34,7 +35,7 @@ class AdKernalController extends Controller
     {
         if(!$this->getCookie())
         {
-            $response = Http::get('https://login.myadcampaigns.com/admin/auth', ['login' => 'myadcampaigns','password' => '2300R!ddle',]);
+            $response = Http::get('https://login.myadcampaigns.com/admin/auth', ['login' => Auth::user()->adkernal_l,'password' => Auth::user()->adkernal_p,]);
         
             if($response->ok())
             {

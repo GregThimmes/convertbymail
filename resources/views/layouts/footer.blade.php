@@ -5,7 +5,7 @@
             <div class="copyright text-center text-muted">
               &copy; <script>
           document.getElementById('copyright').appendChild(document.createTextNode(new Date().getFullYear()))
-        </script> <a href="https://www.directpathdigital.com" class="font-weight-bold ml-1" target="_blank">Direct Path Digital</a>
+        </script> <a href="https://www.directpathdigital.com" class="font-weight-bold ml-1" target="_blank">Staycation Media</a>
             </div>
           </div>
         </div>

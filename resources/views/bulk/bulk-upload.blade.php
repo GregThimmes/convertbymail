@@ -12,6 +12,10 @@
                 <div class="col-lg-6 col-7">
                     <h6 class="h2 text-white d-inline-block mb-0">Bulk Upload</h6>
                 </div>
+                <div class="col-lg-6 col-5 text-right">
+                    <a href="/bulk" class="btn btn-sm btn-neutral"><i class="ni ni-bold-left"></i>
+ Back to Camapign List</a>
+                </div>
             </div>
         </div>
     </div>
