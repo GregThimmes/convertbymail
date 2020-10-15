@@ -26,19 +26,18 @@ class CampaignLinkController extends Controller
         return view('admin/campaignLink')->with('links',$links)->with('id',$id);
     }
 
-    public function store(Request $request)
+    public function update(Request $request)
     {
        
         foreach($request->get('links') AS $link)
         {
-
             $total = $link['total'];
             $link = \App\CampaignLink::find($link['primary_id']);
             $link->total = $total;
             $link->save();
         }
-
-        return redirect('admin/campaign');
+        
+        return redirect('campaign');
     }
 
 }

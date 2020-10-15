@@ -30,7 +30,7 @@
             <div class="card-body">
               <div class="row">
                   <div class="col-md-12">
-                    <form method="POST" action="{{ action('CampaignLinkController@store') }}">
+                    <form method="POST" action="{{ action('CampaignLinkController@update') }}">
               
                     {{ csrf_field() }}
                     
@@ -51,8 +51,8 @@
                                         <td>http://convertbymail.com/campaign_page.php?c={{ $link->campaign_id }}~{{ $link->link_id }}</td>
                                         <td>
                                           <div class="form-group">
-                                            <input type="number" class="form-control" name="links[{{$link->campaign_id}}][total]" value="{{$link->total}}" id="total-field" required>
-                                            <input type="hidden" name="links[{{$link->campaign_id}}][primary_id]" value="{{$link->id}}">
+                                            <input type="number" class="form-control" name="links[{{$link->link_id}}][total]" value="{{$link->total}}" id="total-field" required>
+                                            <input type="hidden" name="links[{{$link->link_id}}][primary_id]" value="{{$link->id}}">
                                           </div>
                                         </td>
                                         </tr>

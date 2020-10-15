@@ -2,7 +2,7 @@
 <nav class="navbar navbar-top navbar-expand navbar-dark bg-primary border-bottom">
       <div class="container-fluid">
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <h2 class="text-white">Convert By Mail</h2>
+          <h2 class="text-white">Admin Tools</h2>
           <!-- Navbar links -->
           <ul class="navbar-nav navbar-nav-hover justify-content-center">
             <li class="nav-item"><a href="{{ route('campaigns') }}" class="nav-link">Campaigns</a></li>

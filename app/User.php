@@ -41,4 +41,14 @@ class User extends Authenticatable
     {
         return $this->level == 9;
     }
+
+    public function isBulk()
+    {
+        return $this->level == 3;
+    }
+
+    public function isMember()
+    {
+        return $this->level == 2;
+    }
 }

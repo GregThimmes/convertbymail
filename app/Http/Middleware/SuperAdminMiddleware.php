@@ -5,7 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Auth;
 
-class isAdmin
+class SuperAdminMiddleware
 {
     /**
      * Handle an incoming request.
@@ -17,7 +17,7 @@ class isAdmin
     public function handle($request, Closure $next)
     {
         if(!Auth::user()->isAdmin()){
-            return redirect('/home');
+            return redirect('/');
         }
         return $next($request);
     }

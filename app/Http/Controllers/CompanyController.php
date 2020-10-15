@@ -58,7 +58,7 @@ class CompanyController extends Controller
         $company->website = $request->get('website');
         $company->save();
 
-        return redirect('admin/companies');
+        return redirect('companies');
     }
 
 

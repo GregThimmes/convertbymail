@@ -69,7 +69,7 @@ class CampaignController extends Controller
         $creativeProcess = $this->processCreative($request->get('creative_o'), $campaign->id);
 
 
-        return redirect('admin/campaign/links/'.$campaign->id);
+        return redirect('campaign/links/'.$campaign->id);
     
 
     }
@@ -112,7 +112,7 @@ class CampaignController extends Controller
 
         $creativeProcess = $this->processCreative($input['creative_o'], $campaign->id);
     
-        return redirect('admin/campaign/links/'.$campaign->id);
+        return redirect('campaign/links/'.$campaign->id);
     }
 
 
@@ -132,7 +132,7 @@ class CampaignController extends Controller
         $campaignLink = \App\CampaignLink::where('campaign_id', $campaign->id)->delete();
         $creativeProcess = $this->processCreative($request->get('creative_o'), $campaign->id);
 
-        return redirect('admin/campaign/links/'.$campaign->id);
+        return redirect('campaign/links/'.$campaign->id);
     }
 
     function processCreative($creative, $id)
@@ -143,7 +143,7 @@ class CampaignController extends Controller
         $deletedRows = \App\CampaignLink::where('campaign_id', $id)->delete();
 
 
-        $openpixel = '<img src="http://convertbymail.com/tracker.php?c='.$id.'" width="0" height="0" />';
+        $openpixel = '<img src="http://staycationmedia.com/tracker.php?c='.$id.'" width="0" height="0" />';
         $openpixel = str_replace('%20',' ',$openpixel);
         
         $o_anchors = array();
