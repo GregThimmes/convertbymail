@@ -144,7 +144,6 @@ class AdKernalController extends Controller
                         }
                     }
 
-
                     if($column[4] == 'FALSE')
                     {
                         $is_campaign_active = false;
@@ -155,9 +154,9 @@ class AdKernalController extends Controller
                         $is_offer_active = false;
                     }
 
-                    $advertiser_id = '101673';
-                    $remotefeed_id = '229533';
-
+                    $advertiser_id = Auth::user()->advertiser_id;
+                    $remotefeed_id = Auth::user()->remotefeed_id;
+                    
                     $response = Http::post('https://login.myadcampaigns.com/admin/api/Campaign?token='.$token.'', array(
                         'advertiser_id' => intval($advertiser_id),
                         'remotefeed_id' => intval($remotefeed_id),
@@ -166,8 +165,8 @@ class AdKernalController extends Controller
                         'budget_daily'  => floatval($column[2]), //double
                         'budget_limiter_type' => $column[3], //ENUM [Evenly,ASAP]
                         'is_active' => $is_campaign_active,
-                        'start_date' => $column[5], //Date
-                        //'start_date' => date("Y-m-d", strtotime($column[5])), //Date
+                        //'start_date' => $column[5], //Date
+                        'start_date' => date("Y-m-d", strtotime($column[5])), //Date
                         'end_date' => date("Y-m-d", strtotime($column[6])) //Date
                     ));
 
