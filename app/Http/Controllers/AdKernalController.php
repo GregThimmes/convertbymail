@@ -94,6 +94,7 @@ class AdKernalController extends Controller
 
                     $country = $column[14];
 
+                    $countryCodes = array();
                     $stateCodes = array();
                     $cityCodes = array();
 
@@ -149,7 +150,7 @@ class AdKernalController extends Controller
                         $is_campaign_active = false;
                     }
 
-                    if($column[4] == 'FALSE')
+                    if($column[8] == 'FALSE')
                     {
                         $is_offer_active = false;
                     }
@@ -179,11 +180,10 @@ class AdKernalController extends Controller
                     }
                     else
                     {
-                        $ad_campaign_id = $result->response->created;
+                        $ad_campaign_id = $result['response']['created'];
 
                         ////make offer call with ad_campaign_ID
-                        $response = Http::post('https://login.myadcampaigns.com/admin/api/OfferNew', [
-                            'token' => $token,
+                        $response = Http::post('https://login.myadcampaigns.com/admin/api/OfferNew?token='.$token.'', [
                             'ad_campaign_id'  => $ad_campaign_id,
                             'name'  => $column[7],
                             'is_active'  => $is_offer_active,
@@ -192,7 +192,7 @@ class AdKernalController extends Controller
                                 'mode' => 'REPLACE',
                                 'create' => array(
                                         'title' => $column[10], //string
-                                        'desc' => $columns[11], //string
+                                        'desc' => $column[11], //string
                                         'display' => $column[12], //string
                                         'dest_url'=> $column[13]
                                     )
@@ -232,11 +232,11 @@ class AdKernalController extends Controller
 
                         ]);
 
-                        $OfferResult = $curl->response;
+                        $OfferResult = $response->json(); 
 
-                        if($OfferResult->status == 'Error')
+                        if($OfferResult['status'] === 'Error')
                         {
-                            $uploadErrors[$row]['offers'] = $OfferResult->message;
+                            $uploadErrors[$row]['offers'] = $OfferResult['message'];
 
                             //$offerError[$row] = array('campaign' => $column[0], 'error' => $OfferResult->message);
                         }
