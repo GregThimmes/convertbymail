@@ -8,7 +8,6 @@ use Cookie;
 use Illuminate\Support\Facades\Http;
 use Auth;
 
-
 class AdKernalController extends Controller
 {
     /**
@@ -91,16 +90,61 @@ class AdKernalController extends Controller
                 {
                     $is_campaign_active = true;
                     $is_offer_active = true;
-
                     $country = $column[14];
-
-                    $countryCodes = array();
+                    $countryCodes = array('us');
                     $stateCodes = array();
                     $cityCodes = array();
 
+                    if($column[17] != '')
+                    {
+                        $dma_file = file_get_contents(storage_path('json/dma.json'));
+                        $json_dma = json_decode($dma_file, true);
+                        $dmaX = explode('|', $column['17']);
+
+                        $dma = array();
+                        foreach($dmaX AS $key => $value)
+                        {   
+                            array_push($dma, $value);
+                        }
+
+                        foreach($json_dma AS $key => $value)
+                        {
+                            foreach($value AS $key2 => $value2)
+                            {
+                                if( in_array($key2, $dma) )
+                                {
+                                    $string = explode(',', $value2);
+
+                                    if(isset($string[0]) && isset($string[1])) 
+                                    {
+                                        $iso = trim(strtolower($string[1]));
+
+                                        if(isset($json_states[0][$country][$iso]))
+                                        {
+                                            $cityName = strtolower(trim($string[0]));
+                                            $stateID = $json_states[0][$country][$iso];
+
+                                            if(isset($json_cities[$stateID][$cityName]))
+                                            {
+                                                $cityCodes[] = $json_cities[$stateID][$cityName];
+                                            }
+                                            else
+                                            {
+                                                $uploadErrors[$row]['cities'][] = $value2;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            $uploadErrors[$row]['states'][] = $value2;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
                     if($column[16] != '')
                     { 
-                        //$cities = explode(PHP_EOL, $column[16]);
                         $cities = explode('|', $column[16]);
                         foreach($cities AS $key => $value)
                         {   
@@ -109,7 +153,7 @@ class AdKernalController extends Controller
                             
                             if(isset($json_states[0][$country][$iso]))
                             {
-                                $cityName = ucwords(strtolower(trim($string[0])));
+                                $cityName = strtolower(trim($string[0]));
                                 $stateID = $json_states[0][$country][$iso];
 
                                 if(isset($json_cities[$stateID][$cityName]))
@@ -181,7 +225,6 @@ class AdKernalController extends Controller
                     else
                     {
                         $ad_campaign_id = $result['response']['created'];
-
                         ////make offer call with ad_campaign_ID
                         $response = Http::post('https://login.myadcampaigns.com/admin/api/OfferNew?token='.$token.'', [
                             'ad_campaign_id'  => $ad_campaign_id,
