@@ -40,7 +40,7 @@
     <script type="text/javascript" charset="utf-8">
     // specify the columns
     var columnDefs = [
-      //{headerName: "Id", field: "id"},
+      {headerName: "Campaign ID", field: "id"},
       {headerName: "Campaign Name", field: "name"},
       //{headerName: "Pricing Model", field: "pricing_model"},
       {headerName: "Start Date", field: "start_date"},

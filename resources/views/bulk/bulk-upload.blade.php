@@ -32,9 +32,9 @@
                 <div class="alert alert-default" role="alert">
                   <p>Use the following upload tool to upload the provided template.  The upload will return a success message or a row by row error message.   Do not try to re-upload the same file, as you will get duplicate campaigns inserted.</p>
           
-                  <button class="btn btn-icon btn-3 btn-warning" type="button">
+                  <a href="{{ asset('assets') }}/bulk_template_11032020.csv" target="_blank" class="btn btn-icon btn-3 btn-warning">
                     <span class="btn-inner--text">Download Template</span>
-                  </button>
+                  </a>
                 </div>
                 <form id="upload_csv" enctype="multipart/form-data" method="post" name="fileinfo">
                   {{ csrf_field() }}
