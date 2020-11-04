@@ -2,7 +2,7 @@
 <nav class="navbar navbar-top navbar-expand navbar-dark bg-primary border-bottom">
       <div class="container-fluid">
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <h2 class="text-white">Admin Tools</h2>
+          <h2 class="text-white"><a href="./">Admin Tools</a></h2>
           <!-- Navbar links -->
           <ul class="navbar-nav align-items-center  ml-md-auto ">
             <li class="nav-item dropdown">
@@ -15,29 +15,8 @@
                   <h6 class="text-sm text-muted m-0">You have <strong class="text-primary">0</strong> notifications.</h6>
                 </div>
                 <!-- List group -->
-                <div class="list-group list-group-flush">
-                  <a href="#!" class="list-group-item list-group-item-action" style="display:none;">
-                    <div class="row align-items-center">
-                      <div class="col-auto">
-                        <!-- Avatar -->
-                        <img alt="Image placeholder" src="../../assets/img/theme/team-1.jpg" class="avatar rounded-circle">
-                      </div>
-                      <div class="col ml--2">
-                        <div class="d-flex justify-content-between align-items-center">
-                          <div>
-                            <h4 class="mb-0 text-sm">System Admin</h4>
-                          </div>
-                          <div class="text-right text-muted">
-                            <small>2 hrs ago</small>
-                          </div>
-                        </div>
-                        <p class="text-sm mb-0">Example Message</p>
-                      </div>
-                    </div>
-                  </a>
-                </div>
+
                 <!-- View all -->
-                <a href="#!" class="dropdown-item text-center text-primary font-weight-bold py-3" style="display:none;">View all</a>
               </div>
             </li>
           </ul>
@@ -54,13 +33,9 @@
                 <div class="dropdown-header noti-title">
                   <h6 class="text-overflow m-0">Welcome!</h6>
                 </div>
-                <a href="#!" class="dropdown-item">
+                <a href="/profile" class="dropdown-item">
                   <i class="ni ni-single-02"></i>
                   <span>My profile</span>
-                </a>
-                <a href="#!" class="dropdown-item">
-                  <i class="ni ni-support-16"></i>
-                  <span>Support</span>
                 </a>
                 <div class="dropdown-divider"></div>
                 <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
