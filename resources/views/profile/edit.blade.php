@@ -21,30 +21,53 @@
               @csrf
               @method('put')
               @include('alerts.success')
-              <div class="row">
-              </div>
                 <div class="row">
-                    <div class="col-md-7 pr-1">
+                    <div class="col-md-6 pr-1">
                         <div class="form-group">
                             <label>{{__(" Name")}}</label>
-                                <input type="text" name="name" class="form-control" value="{{ old('name', auth()->user()->name) }}">
-                                @include('alerts.feedback', ['field' => 'name'])
+                            <input type="text" name="name" class="form-control" value="{{ old('name', auth()->user()->name) }}">
+                            @include('alerts.feedback', ['field' => 'name'])
                         </div>
-                    </div>
-                </div>
-                <div class="row">
-                  <div class="col-md-7 pr-1">
-                    <div class="form-group">
-                      <label for="exampleInputEmail1">{{__(" Email address")}}</label>
-                      <input type="email" name="email" class="form-control" placeholder="Email" value="{{ old('email', auth()->user()->email) }}">
-                      @include('alerts.feedback', ['field' => 'email'])
-                    </div>
+   
+                        <div class="form-group">
+                          <label for="exampleInputEmail1">{{__(" Email address")}}</label>
+                          <input type="email" name="email" class="form-control" placeholder="Email" value="{{ old('email', auth()->user()->email) }}">
+                          @include('alerts.feedback', ['field' => 'email'])
+                        </div>
+                        
+                        @if( auth()->user()->level === 3)
+                        <div class="form-group">
+                            <label>{{__(" Adkernal Username")}}</label>
+                            <input type="text" name="adkernal_l" placeholder="Adkernal Login" class="form-control" value="{{ old('adkernal_l', auth()->user()->adkernal_l) }}">
+                            @include('alerts.feedback', ['field' => 'adkernal_l'])
+                        </div>
+   
+                        <div class="form-group">
+                            <label>{{__(" Adkernal Password")}}</label>
+                            <input type="text" name="adkernal_p" class="form-control" placeholder="Adkernal Password" value="{{ old('adkernal_p', auth()->user()->adkernal_p) }}">
+                            @include('alerts.feedback', ['field' => 'adkernal_p'])
+                        </div>
+
+                        <div class="form-group">
+                            <label>{{__(" Remote Feed ID")}}</label>
+                            <input type="text" name="remotefeed_id" class="form-control" placeholder="Remote Feed ID" value="{{ old('remotefeed_id', auth()->user()->remotefeed_id) }}">
+                            @include('alerts.feedback', ['field' => 'remotefeed_id'])
+                        </div>
+
+                        <div class="form-group">
+                            <label>{{__(" Advertiser ID")}}</label>
+                            <input type="text" name="advertiser_id" class="form-control" placeholder="Advertiser ID" value="{{ old('advertiser_id', auth()->user()->advertiser_id) }}">
+                            @include('alerts.feedback', ['field' => 'advertiser_id'])
+                        </div>
+                        @endif
                   </div>
                 </div>
-              <div class="card-footer ">
-                <button type="submit" class="btn btn-primary btn-round">{{__('Save')}}</button>
-              </div>
-              <hr class="half-rule"/>
+                <div class="row">
+                  <div class="card-footer ">
+                    <button type="submit" class="btn btn-primary btn-round">{{__('Save')}}</button>
+                  </div>
+                  <hr class="half-rule"/>
+                </div>
             </form>
           </div>
           <div class="card-header">
