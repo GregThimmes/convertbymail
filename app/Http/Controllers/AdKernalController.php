@@ -32,25 +32,33 @@ class AdKernalController extends Controller
 
     public function create_token()
     {
-        if(!$this->getCookie())
+        if(!$this->getTokenSession())
         {
             $response = Http::get('https://login.myadcampaigns.com/admin/auth', ['login' => Auth::user()->adkernal_l,'password' => Auth::user()->adkernal_p,]);
         
             if($response->ok())
             {
                 $token = $response->body();
-                Cookie::queue('3CEB6A9B84DDAE0F4A98BDF212857467', $token, 10);
+                session(['3CEB6A9B84DDAE0F4A98BDF212857467' => $token]);
                 return $response->body();
             }
         }
         else
         {
-            return $this->getCookie();
+            return $this->getTokenSession();
         }
     }
 
-   public function getCookie(){
-        return Cookie::get('3CEB6A9B84DDAE0F4A98BDF212857467');
+   public function getTokenSession(){
+
+        if(session('3CEB6A9B84DDAE0F4A98BDF212857467') != null)
+        {
+            return session('3CEB6A9B84DDAE0F4A98BDF212857467');
+        }
+        else
+        {
+            return false;
+        }
    }
 
     public function Campaigns()
@@ -59,6 +67,12 @@ class AdKernalController extends Controller
 
         $response = Http::get('https://login.myadcampaigns.com/admin/api/Campaign', ['token' => $token,'range' => '0-25','filters' => 'is_active:true', 'ord' => '-id',]);
         $body = $response->json(); 
+
+        if($body['status'] === 'Error')
+        {
+            return json_encode(array());
+        }
+
         $array_data = (array) $body['response'];
         $json_data = json_encode(array_values($array_data));
         return $json_data; 
