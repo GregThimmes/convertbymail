@@ -48,7 +48,7 @@
 
                                     @foreach($links AS $link)
                                         <tr>
-                                        <td>http://convertbymail.com/campaign_page.php?c={{ $link->campaign_id }}~{{ $link->link_id }}</td>
+                                        <td>http://ads.staycationmedia.com/campaign_page.php?c={{ $link->campaign_id }}~{{ $link->link_id }}</td>
                                         <td>
                                           <div class="form-group">
                                             <input type="number" class="form-control" name="links[{{$link->link_id}}][total]" value="{{$link->total}}" id="total-field" required>

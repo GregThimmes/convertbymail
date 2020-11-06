@@ -32,40 +32,35 @@ class AdKernalController extends Controller
 
     public function create_token()
     {
-        if(!$this->getTokenSession())
-        {
+        
             $response = Http::get('https://login.myadcampaigns.com/admin/auth', ['login' => Auth::user()->adkernal_l,'password' => Auth::user()->adkernal_p,]);
         
             if($response->ok())
             {
                 $token = $response->body();
-                session(['3CEB6A9B84DDAE0F4A98BDF212857467' => $token]);
                 return $response->body();
             }
-        }
-        else
-        {
-            return $this->getTokenSession();
-        }
+        
+            else
+            {
+                return '';
+            }
     }
-
-   public function getTokenSession(){
-
-        if(session('3CEB6A9B84DDAE0F4A98BDF212857467') != null)
-        {
-            return session('3CEB6A9B84DDAE0F4A98BDF212857467');
-        }
-        else
-        {
-            return false;
-        }
-   }
 
     public function Campaigns()
     {
         $token = $this->create_token();
 
-        $response = Http::get('https://login.myadcampaigns.com/admin/api/Campaign', ['token' => $token,'range' => '0-25','filters' => 'is_active:true', 'ord' => '-id',]);
+        $filters = array();
+        if(Auth::user()->level != 9)
+        {
+            $response = Http::get('https://login.myadcampaigns.com/admin/api/Campaign', ['token' => $token,'range' => '0-25', 'filters' => 'advertiser:'.Auth::user()->advertiser_id.'', 'ord' => '-id',]);
+        }
+        else
+        {
+            $response = Http::get('https://login.myadcampaigns.com/admin/api/Campaign', ['token' => $token,'range' => '0-25', 'ord' => '-id',]);
+        }
+        
         $body = $response->json(); 
 
         if($body['status'] === 'Error')

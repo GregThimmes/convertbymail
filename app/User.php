@@ -44,7 +44,7 @@ class User extends Authenticatable
 
     public function isBulk()
     {
-        return $this->level == 3;
+        return $this->level == 3 || $this->level == 9;
     }
 
     public function isMember()

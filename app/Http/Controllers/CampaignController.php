@@ -163,7 +163,7 @@ class CampaignController extends Controller
                 if($href_tag != 'http://ww2.networkmediaworks.com/r/')
                 {
                     $o_anchors[] = $href_tag; //$anchor->getAttribute('href');
-                    $anchor->setAttribute('href', "http://convertbymail.com/campaign_page.php?c=".$id."~".$i);
+                    $anchor->setAttribute('href', "http://ads.staycationmedia.com/campaign_page.php?c=".$id."~".$i);
                     $i++;
                 }
             }

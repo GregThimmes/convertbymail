@@ -45,13 +45,13 @@
               @foreach ($campaigns as $campaign)
                 <tr>
                    <td>
-                      <a href="http://convertbymail.com/adtrack/viewCreative.php?c={{ $campaign->id }}" target="_blank">{{ $campaign->name }}</a>
+                      <a href="http://ads.staycationmedia.com/adtrack/viewCreative.php?c={{ $campaign->id }}" target="_blank">{{ $campaign->name }}</a>
                   </td>
                    <td>
                       {{ $campaign->o_rate }}
                   </td>
                    <td>
-                      http://convertbymail.com/process.php?c={{ $campaign->id }}
+                      http://ads.staycationmedia.com/process.php?c={{ $campaign->id }}
                   </td>
                   <td>
                     {{ $campaign->active === 1 ? "Active" : "Inactive" }}

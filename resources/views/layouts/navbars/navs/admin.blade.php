@@ -2,13 +2,14 @@
 <nav class="navbar navbar-top navbar-expand navbar-dark bg-primary border-bottom">
       <div class="container-fluid">
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <h2 class="text-white">Admin Tools</h2>
+          <h2 class="text-white mt-2">Admin Tools</h2>
           <!-- Navbar links -->
           <ul class="navbar-nav navbar-nav-hover justify-content-center">
             <li class="nav-item"><a href="{{ route('campaigns') }}" class="nav-link">Campaigns</a></li>
              <li class="nav-item"><a href="{{ route('orders') }}" class="nav-link">Orders</a></li>
              <li class="nav-item"><a href="{{ route('companies') }}" class="nav-link">Companies</a></li>
              <li class="nav-item"><a href="{{ route('reps') }}" class="nav-link">Sales Reps</a></li>
+             <li class="nav-item"><a href="{{ route('bulk') }}" class="nav-link">Adkernal Bulk</a></li>
           </ul>
           <ul class="navbar-nav align-items-center ml-md-auto ">
             <li class="nav-item dropdown">
