@@ -49,16 +49,15 @@ class AdKernalController extends Controller
 
     public function Campaigns()
     {
-        $token = $this->create_token();
-
+        $token = $this->create_token();                    
         $filters = array();
         if(Auth::user()->level != 9)
         {
-            $response = Http::get('https://login.myadcampaigns.com/admin/api/Campaign', ['token' => $token,'range' => '0-25', 'filters' => 'advertiser:'.Auth::user()->advertiser_id.'', 'ord' => '-id',]);
+            $response = Http::get('https://login.myadcampaigns.com/admin/api/Campaign', ['token' => $token, 'range' => '0-10', 'filters' => 'advertiser:'.Auth::user()->advertiser_id.'', 'is_active:true', 'ord' => '-id',]);
         }
         else
         {
-            $response = Http::get('https://login.myadcampaigns.com/admin/api/Campaign', ['token' => $token,'range' => '0-25', 'ord' => '-id',]);
+            $response = Http::get('https://login.myadcampaigns.com/admin/api/Campaign', ['token' => $token, 'range' => '0-10', 'filters' => 'is_active:true', 'ord' => '-id',]);
         }
         
         $body = $response->json(); 
@@ -71,6 +70,89 @@ class AdKernalController extends Controller
         $array_data = (array) $body['response'];
         $json_data = json_encode(array_values($array_data));
         return $json_data; 
+    }
+
+    public function Download()
+    {
+        $headers = [
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Content-type' => 'text/csv',   
+            'Content-Disposition' => 'attachment; filename=campaigns.csv',   
+            'Expires' => '0',
+            'Pragma' => 'public'
+        ];
+
+        $columns = array('campaign_id', 'campaign_name', 'campaign_budget_total', 'campaign_budget_daily', 'campaign_budget_limiter_type', 'campaign_is_active',  'campaign_start_date', 'campaign_end_date', 'offer_name','offer_active','offer_bid','ad_title','ad_desc ad_display', 'ad_destination_url', 'countries', 'states','cities', 'dma');
+
+        $token = $this->create_token();
+ 
+        if(Auth::user()->level != 9)
+        {
+            $response = Http::get('https://login.myadcampaigns.com/admin/api/Campaign', ['token' => $token, 'range' => '0-10', 'filters' => 'advertiser:'.Auth::user()->advertiser_id.'', 'is_active:true', 'ord' => '-id',]);
+        }
+        else
+        {
+            $response = Http::get('https://login.myadcampaigns.com/admin/api/Campaign', ['token' => $token, 'range' => '0-10', 'filters' => 'is_active:true', 'ord' => '-id',]);
+        }
+
+        $body = $response->json(); 
+
+        if($body['status'] === 'Error')
+        {   
+            $row = array();
+        }
+        else 
+        {
+            $row = array();
+            $data = (array) $body['response'];
+            $count = 0;
+            foreach ($data as $key => $value) 
+            {
+                $row[$count]['campaign_id'] = $value['id'];
+                $row[$count]['campaign_name']  = $value['name'];
+                $row[$count]['campaign_budget_total'] = $value['budget_total'];
+                $row[$count]['campaign_budget_daily']  = $value['budget_daily'];
+                $row[$count]['campaign_budget_limiter_type']  = $value['budget_daily'];
+                $row[$count]['campaign_is_active'] = $value['is_active'];
+                $row[$count]['campaign_start_date'] = $value['start_date'];
+                $row[$count]['campaign_end_date'] = $value['end_date'];
+
+                $offerResponse = Http::get('https://login.myadcampaigns.com/admin/api/OfferNew', ['token' => $token, 'filters' => 'campaign:'.$value['id'].'']);
+
+                $body2 = $offerResponse->json(); 
+                $data2 = (array) $body['response'];
+
+                foreach($data2 as $key2 => $value2)
+                {
+                    $row[$count]['offer_name'] = $value2['name'];
+                    $row[$count]['offer_active'] = $value2['is_active'];
+                    $row[$count]['offer_bid'] = '';
+                    $row[$count]['ad_title'] = '';
+                    $row[$count]['ad_desc ad_display'] = '';
+                    $row[$count]['ad_destination_url'] = '';
+                    $row[$count]['countries'] = '';
+                    $row[$count]['states'] = '';
+                    $row[$count]['cities'] = '';
+                    $row[$count]['dma'] = ''; 
+                }
+
+                $count++;
+            }
+        }
+
+        $callback = function() use($row, $columns) 
+        {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $columns);
+            foreach( $row AS $key => $value)
+            {
+                fputcsv($file, $value);
+            }
+            
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);        
     }
 
     public function Upload()

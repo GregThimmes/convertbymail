@@ -48,6 +48,8 @@ Route::group(['middleware' => 'auth'], function () {
 			Route::get('bulk/campaigns', 'AdKernalController@Campaigns')->name('bulk-campaigns');
 			Route::get('bulk/upload', 'AdKernalController@Upload')->name('bulk-upload');
 			Route::post('bulk/store', 'AdKernalController@Store')->name('bulk-store');
+		 	Route::get('bulk/download', 'AdKernalController@Download');
+
 	});
 
 	Route::group(['middleware' => 'App\Http\Middleware\SuperAdminMiddleware'], function()

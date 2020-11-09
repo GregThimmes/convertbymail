@@ -13,6 +13,7 @@
                     <h6 class="h2 text-white d-inline-block mb-0">Active Campaigns</h6>
                 </div>
                 <div class="col-lg-6 col-5 text-right">
+                    <a href="/bulk/download" id="export" class="btn btn-sm btn-neutral" target="_blank">Export</a>
                     <a href="/bulk/upload" class="btn btn-sm btn-neutral">Bulk Upload</a>
                 </div>
             </div>
@@ -105,5 +106,6 @@
             }
         };
     });
+
   </script>
 @endpush
