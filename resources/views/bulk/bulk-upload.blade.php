@@ -45,6 +45,12 @@
                     <input id="upload_button" class="btn btn-primary mt-4" type="submit" value="Upload File">
                  </form>
                 </div>
+                <div class="col-4">
+                  <h5 class="h3 mb-0">Recent Updates</h5>
+                  <ul class="mt-4">
+                      <li><strong>Nov 16th, 2020</strong> - Updated upload to prevent duplicate campaign names to be uploaded.</li>
+                  </ul>
+                </div>
               </div>
               <div class="row">
                 <div class="col-12">

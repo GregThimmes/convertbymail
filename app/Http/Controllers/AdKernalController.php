@@ -72,6 +72,26 @@ class AdKernalController extends Controller
         return $json_data; 
     }
 
+    public function getCampaignByName($name, $token)
+    {
+        $name = strtolower(trim($name));
+
+         $response = Http::get('https://login.myadcampaigns.com/admin/api/Campaign', ['token' => $token, 'filters' => 'search:'.$name.'']);
+         $result = $response->json(); 
+
+         foreach($result['response'] AS $key => $value)
+         {
+            $searchName = strtolower(trim($value['name']));
+
+            if( $searchName === $name)
+            {
+                return false;
+            }
+         }
+
+         return true;
+    }
+
     public function Download()
     {
         $headers = [
@@ -120,20 +140,63 @@ class AdKernalController extends Controller
                 $offerResponse = Http::get('https://login.myadcampaigns.com/admin/api/OfferNew', ['token' => $token, 'filters' => 'campaign:'.$value['id'].'']);
 
                 $body2 = $offerResponse->json(); 
-                $data2 = (array) $body['response'];
+                $data2 = (array) $body2['response'];
 
+                
                 foreach($data2 as $key2 => $value2)
                 {
+  
                     $row[$count]['offer_name'] = $value2['name'];
                     $row[$count]['offer_active'] = $value2['is_active'];
-                    $row[$count]['offer_bid'] = '';
-                    $row[$count]['ad_title'] = '';
-                    $row[$count]['ad_desc ad_display'] = '';
-                    $row[$count]['ad_destination_url'] = '';
-                    $row[$count]['countries'] = '';
-                    $row[$count]['states'] = '';
-                    $row[$count]['cities'] = '';
-                    $row[$count]['dma'] = ''; 
+                    $row[$count]['offer_bid'] = $value2['bid'];
+
+                    foreach($value2['Ad']['value'] AS $value3)
+                    {
+                        $row[$count]['ad_title'] = $value3['title'];
+                        $row[$count]['ad_desc ad_display'] = $value3['desc'];
+                        $row[$count]['ad_destination_url'] = $value3['dest_url'];
+                    }
+
+                    $countries = '';
+                    $states = '';
+                    $cities = '';
+
+                    $geoStatesUS = file_get_contents(storage_path('json/GeoStatesUS.json'));
+                    $json_states = json_decode($geoStatesUS, true);
+
+
+                    foreach($value2['Location']['value'] AS $value4)
+                    {
+
+                        if($value4['type'] === 'COUNTRY')
+                        {
+                            if($value4['enabled'] === true )
+                            {
+                                $countries .= ''.$value4['id'].'|';
+                            }
+                            
+                        }
+
+                        if($value4['type'] === 'STATE')
+                        {
+                            $states .= ''.$value4['name'].'|';
+                            
+                        }
+
+                        if($value4['type'] === 'CITY')
+                        {
+                            if($value4['enabled'] === true )
+                            {
+                                $stateName = $json_states[$value4['id']['Region']];
+                                $cities .= ''.$value4['name'].','.$stateName.'|';
+                            }
+                        }
+                        
+                    }
+
+                    $row[$count]['countries'] = $countries;
+                    $row[$count]['states'] = $states;
+                    $row[$count]['cities'] = $cities;
                 }
 
                 $count++;
@@ -290,26 +353,35 @@ class AdKernalController extends Controller
                         $is_offer_active = false;
                     }
 
-                    $advertiser_id = Auth::user()->advertiser_id;
-                    $remotefeed_id = Auth::user()->remotefeed_id;
-                    
-                    $response = Http::post('https://login.myadcampaigns.com/admin/api/Campaign?token='.$token.'', array(
-                        'advertiser_id' => intval($advertiser_id),
-                        'remotefeed_id' => intval($remotefeed_id),
-                        'name'  => $column[0],
-                        'budget_total'  => floatval($column[1]), //double
-                        'budget_daily'  => floatval($column[2]), //double
-                        'budget_limiter_type' => $column[3], //ENUM [Evenly,ASAP]
-                        'is_active' => $is_campaign_active,
-                        //'start_date' => $column[5], //Date
-                        'start_date' => date("Y-m-d", strtotime($column[5])), //Date
-                        'end_date' => date("Y-m-d", strtotime($column[6])) //Date
-                    ));
+                    $duplicate = $this->getCampaignByName($column[0], $token);
+                    $result['status'] = 'Error';
 
-                    $result = $response->json(); 
+                    if($duplicate)
+                    { 
+                        $advertiser_id = Auth::user()->advertiser_id;
+                        $remotefeed_id = Auth::user()->remotefeed_id;
 
-                    
-                    if($result['status'] === 'Error')
+                        $response = Http::post('https://login.myadcampaigns.com/admin/api/Campaign?token='.$token.'', array(
+                            'advertiser_id' => intval($advertiser_id),
+                            'remotefeed_id' => intval($remotefeed_id),
+                            'name'  => $column[0],
+                            'budget_total'  => floatval($column[1]), //double
+                            'budget_daily'  => floatval($column[2]), //double
+                            'budget_limiter_type' => $column[3], //ENUM [Evenly,ASAP]
+                            'is_active' => $is_campaign_active,
+                            //'start_date' => $column[5], //Date
+                            'start_date' => date("Y-m-d", strtotime($column[5])), //Date
+                            'end_date' => date("Y-m-d", strtotime($column[6])) //Date
+                        ));
+
+                        $result = $response->json();
+                    }
+
+                    if(!$duplicate)
+                    {
+                        $uploadErrors[$row]['campaigns'] = 'Campaign name already exists';
+                    }
+                    else if($result['status'] === 'Error')
                     {
                         $uploadErrors[$row]['campaigns'] = $result['message'];
                     }
