@@ -128,12 +128,20 @@ class AdKernalController extends Controller
             $count = 0;
             foreach ($data as $key => $value) 
             {
+                if($value['is_active'] == 1)
+                {
+                    $active = 'TRUE';
+                }
+                else
+                {
+                    $active = 'FALSE';
+                }
                 $row[$count]['campaign_id'] = $value['id'];
                 $row[$count]['campaign_name']  = $value['name'];
                 $row[$count]['campaign_budget_total'] = $value['budget_total'];
                 $row[$count]['campaign_budget_daily']  = $value['budget_daily'];
                 $row[$count]['campaign_budget_limiter_type']  = $value['budget_daily'];
-                $row[$count]['campaign_is_active'] = $value['is_active'];
+                $row[$count]['campaign_is_active'] = $active;
                 $row[$count]['campaign_start_date'] = $value['start_date'];
                 $row[$count]['campaign_end_date'] = $value['end_date'];
 
@@ -142,12 +150,20 @@ class AdKernalController extends Controller
                 $body2 = $offerResponse->json(); 
                 $data2 = (array) $body2['response'];
 
-                
                 foreach($data2 as $key2 => $value2)
                 {
-  
+                    
+                    if($value2['is_active'] == 1)
+                    {
+                        $active = 'TRUE';
+                    }
+                    else
+                    {
+                        $active = 'FALSE';
+                    }
+
                     $row[$count]['offer_name'] = $value2['name'];
-                    $row[$count]['offer_active'] = $value2['is_active'];
+                    $row[$count]['offer_active'] = $active;
                     $row[$count]['offer_bid'] = $value2['bid'];
 
                     foreach($value2['Ad']['value'] AS $value3)
@@ -223,6 +239,7 @@ class AdKernalController extends Controller
         return view('bulk/bulk-upload');
     }
 
+
     public function Store()
     {
         $fileName = $_FILES["csv_file"]["tmp_name"];
@@ -235,13 +252,32 @@ class AdKernalController extends Controller
             $json_cities = json_decode($cities, true);
             $states = file_get_contents(storage_path('json/GeoRegions.json'));
             $json_states = json_decode($states, true);
+            $regions = file_get_contents(storage_path('json/GeoRegionByID.json'));
+            $json_regions = json_decode($regions,true);
+
+            /*
+            $states = array();
+            foreach($json_regions AS $key => $value)
+            {
+                $region = strtolower($value['Region']);
+                $states[$value['Country']][$region] = $value['Id'];
+            }
+            die(print_r(json_encode($states)));
+            */
+
             $file = fopen($fileName, "r");
             $row = 0;
             $uploadErrors = array();
             while (($column = fgetcsv($file, 10000, ",")) !== FALSE) 
             {
+                $is_new = true;
+
                 if($row > 0)
                 {
+                    if($column[0] != '')
+                    {
+                        $is_new = false;
+                    }
                     $is_campaign_active = true;
                     $is_offer_active = true;
                     $country = $column[14];
@@ -249,135 +285,167 @@ class AdKernalController extends Controller
                     $stateCodes = array();
                     $cityCodes = array();
 
-                    if($column[17] != '')
+                    if($is_new === true)
                     {
-                        $dma_file = file_get_contents(storage_path('json/dma.json'));
-                        $json_dma = json_decode($dma_file, true);
-                        $dmaX = explode('|', $column['17']);
 
-                        $dma = array();
-                        foreach($dmaX AS $key => $value)
-                        {   
-                            array_push($dma, $value);
-                        }
-
-                        foreach($json_dma AS $key => $value)
+                        if($column[17] != '')
                         {
-                            foreach($value AS $key2 => $value2)
+                            $dma_file = file_get_contents(storage_path('json/dma.json'));
+                            $json_dma = json_decode($dma_file, true);
+                            $dmaX = explode('|', $column['17']);
+
+                            $dma = array();
+                            foreach($dmaX AS $key => $value)
+                            {   
+                                array_push($dma, $value);
+                            }
+
+                            foreach($json_dma AS $key => $value)
                             {
-                                if( in_array($key2, $dma) )
+                                foreach($value AS $key2 => $value2)
                                 {
-                                    $string = explode(',', $value2);
-
-                                    if(isset($string[0]) && isset($string[1])) 
+                                    if( in_array($key2, $dma) )
                                     {
-                                        $iso = trim(strtolower($string[1]));
+                                        $string = explode(',', $value2);
 
-                                        if(isset($json_states[0][$country][$iso]))
+                                        if(isset($string[0]) && isset($string[1])) 
                                         {
-                                            $cityName = strtolower(trim($string[0]));
-                                            $stateID = $json_states[0][$country][$iso];
+                                            $iso = trim(strtolower($string[1]));
 
-                                            if(isset($json_cities[$stateID][$cityName]))
+                                            if(isset($json_states[0][$country][$iso]))
                                             {
-                                                $cityCodes[] = $json_cities[$stateID][$cityName];
+                                                $cityName = strtolower(trim($string[0]));
+                                                $stateID = $json_states[0][$country][$iso];
+
+                                                if(isset($json_cities[$stateID][$cityName]))
+                                                {
+                                                    $cityCodes[] = $json_cities[$stateID][$cityName];
+                                                }
+                                                else
+                                                {
+                                                    $uploadErrors[$row]['cities'][] = $value2;
+                                                }
                                             }
                                             else
                                             {
-                                                $uploadErrors[$row]['cities'][] = $value2;
+                                                $uploadErrors[$row]['states'][] = $value2;
                                             }
-                                        }
-                                        else
-                                        {
-                                            $uploadErrors[$row]['states'][] = $value2;
                                         }
                                     }
                                 }
                             }
                         }
-                    }
 
-                    if($column[16] != '')
-                    { 
-                        $cities = explode('|', $column[16]);
-                        foreach($cities AS $key => $value)
-                        {   
-                            $string = explode(',', $value);
-                            $iso = trim(strtolower($string[1]));
-                            
-                            if(isset($json_states[0][$country][$iso]))
-                            {
-                                $cityName = strtolower(trim($string[0]));
-                                $stateID = $json_states[0][$country][$iso];
-
-                                if(isset($json_cities[$stateID][$cityName]))
+                        if($column[16] != '')
+                        { 
+                            $cities = explode('|', $column[16]);
+                            foreach($cities AS $key => $value)
+                            {   
+                                $string = explode(',', $value);
+                                $iso = trim(strtolower($string[1]));
+                                
+                                if(isset($json_states[0][$country][$iso]))
                                 {
-                                    $cityCodes[] = $json_cities[$stateID][$cityName];
+                                    $cityName = strtolower(trim($string[0]));
+                                    $stateID = $json_states[0][$country][$iso];
+
+                                    if(isset($json_cities[$stateID][$cityName]))
+                                    {
+                                        $cityCodes[] = $json_cities[$stateID][$cityName];
+                                    }
+                                    else
+                                    {
+                                        $uploadErrors[$row]['cities'][] = $value;
+                                    }
                                 }
                                 else
                                 {
                                     $uploadErrors[$row]['cities'][] = $value;
                                 }
                             }
-                            else
-                            {
-                                $uploadErrors[$row]['cities'][] = $value;
-                            }
                         }
-                    }
 
-                    if($column[15] != '')
-                    {
-                        $states = explode('|', $column[15]);
-                        foreach($states AS $key => $value)
+                        if($column[15] != '')
                         {
-                            $iso = trim(strtolower($value));
-                            if(isset($json_states[0][$country][$iso]))
+                            $states = rtrim($column[15], '|');
+                            $states = explode('|', $states);
+                            foreach($states AS $key => $value)
                             {
-                                $stateCodes[] = $json_states[0][$country][$iso];
-                            }
-                            else
-                            {
-                                $uploadErrors[$row]['states'][] = $iso;
+                                $iso = trim(strtolower($value));
+                                if(isset($json_regions[$country][$iso]))
+                                {
+                                    $stateCodes[] = $json_regions[$country][$iso];
+                                }
+                                else
+                                {
+                                    $uploadErrors[$row]['states'][] = $iso;
+                                }
                             }
                         }
                     }
 
-                    if($column[4] == 'FALSE')
+                    if($column[5] === 'FALSE' || $column[5] === 0)
                     {
                         $is_campaign_active = false;
                     }
 
-                    if($column[8] == 'FALSE')
+                    if($column[9] == 'FALSE' || $column[9] === 0)
                     {
                         $is_offer_active = false;
                     }
 
-                    $duplicate = $this->getCampaignByName($column[0], $token);
+                    $duplicate = false;
+
+                    if($is_new === true)
+                    {
+                        $duplicate = $this->getCampaignByName($column[1], $token);
+                    }
+
                     $result['status'] = 'Error';
+                    $result['message'] = 'Unknown Error Occured';
 
-                    if($duplicate)
-                    { 
-                        $advertiser_id = Auth::user()->advertiser_id;
-                        $remotefeed_id = Auth::user()->remotefeed_id;
+                    
+                    $advertiser_id = Auth::user()->advertiser_id;
+                    $remotefeed_id = Auth::user()->remotefeed_id;
 
-                        $response = Http::post('https://login.myadcampaigns.com/admin/api/Campaign?token='.$token.'', array(
-                            'advertiser_id' => intval($advertiser_id),
-                            'remotefeed_id' => intval($remotefeed_id),
-                            'name'  => $column[0],
-                            'budget_total'  => floatval($column[1]), //double
-                            'budget_daily'  => floatval($column[2]), //double
-                            'budget_limiter_type' => $column[3], //ENUM [Evenly,ASAP]
-                            'is_active' => $is_campaign_active,
-                            //'start_date' => $column[5], //Date
-                            'start_date' => date("Y-m-d", strtotime($column[5])), //Date
-                            'end_date' => date("Y-m-d", strtotime($column[6])) //Date
+                    if($is_new === true)
+                    {
+                        if($duplicate)
+                        { 
+                            $response = Http::post('https://login.myadcampaigns.com/admin/api/Campaign?token='.$token.'', array(
+                                'advertiser_id' => intval($advertiser_id),
+                                'remotefeed_id' => intval($remotefeed_id),
+                                'name'  => $column[1],
+                                'budget_total'  => floatval($column[2]), //double
+                                'budget_daily'  => floatval($column[3]), //double
+                                'budget_limiter_type' => $column[4], //ENUM [Evenly,ASAP]
+                                'is_active' => $is_campaign_active,
+                                //'start_date' => $column[5], //Date
+                                'start_date' => date("Y-m-d", strtotime($column[6])), //Date
+                                'end_date' => date("Y-m-d", strtotime($column[7])) //Date
+                            ));
+
+                            $result = $response->json();
+                        }
+                    } else {
+
+                        $response = Http::put('https://login.myadcampaigns.com/admin/api/Campaign/'.$column[0].'?token='.$token.'', array(
+                        //'id' => intval($column[0]),
+                        'advertiser_id' => intval($advertiser_id),
+                        'remotefeed_id' => intval($remotefeed_id),
+                        'name'  => $column[1],
+                        'budget_total'  => floatval($column[2]), //double
+                        'budget_daily'  => floatval($column[3]), //double
+                        'budget_limiter_type' => $column[4], //ENUM [Evenly,ASAP]
+                        'is_active' => $is_campaign_active,
+                        'start_date' => date("Y-m-d", strtotime($column[6])), //Date
+                        'end_date' => date("Y-m-d", strtotime($column[7])) //Date
                         ));
 
                         $result = $response->json();
                     }
 
-                    if(!$duplicate)
+                    if(!$duplicate && $is_new === true)
                     {
                         $uploadErrors[$row]['campaigns'] = 'Campaign name already exists';
                     }
@@ -387,64 +455,78 @@ class AdKernalController extends Controller
                     }
                     else
                     {
-                        $ad_campaign_id = $result['response']['created'];
-                        ////make offer call with ad_campaign_ID
-                        $response = Http::post('https://login.myadcampaigns.com/admin/api/OfferNew?token='.$token.'', [
-                            'ad_campaign_id'  => $ad_campaign_id,
-                            'name'  => $column[7],
-                            'is_active'  => $is_offer_active,
-                            'bid' => floatval($column[9]), //ENUM [Evenly,ASAP]
-                            'Ad' => array(
-                                'mode' => 'REPLACE',
-                                'create' => array(
-                                        'title' => $column[10], //string
-                                        'desc' => $column[11], //string
-                                        'display' => $column[12], //string
-                                        'dest_url'=> $column[13]
-                                    )
-                            ),
-                            'Location' => array(
-                                'mode' => 'REPLACE',
-                                'edit' => array(
-                                    'countries' => $countryCodes,
-                                    'states' => $stateCodes,
-                                    'cities' => $cityCodes,
-                                    'enabled' => true
-                                )
-                            ),
-                            'TimePeriod' => array(
-                                'mode' => 'REPLACE',
-                                'edit' => array(
-                                    array( "hour" => 4, "enabled" => true),
-                                    array( "hour" => 5, "enabled" => true),
-                                    array( "hour" => 6, "enabled" => true),
-                                    array( "hour" => 7, "enabled" => true),
-                                    array( "hour" => 8, "enabled" => true),
-                                    array( "hour" => 9, "enabled" => true),
-                                    array( "hour" => 10, "enabled" => true),
-                                    array( "hour" => 11, "enabled" => true),
-                                    array( "hour" => 12, "enabled" => true),
-                                    array( "hour" => 13, "enabled" => true),
-                                    array( "hour" => 14, "enabled" => true),
-                                    array( "hour" => 15, "enabled" => true),
-                                    array( "hour" => 16, "enabled" => true),
-                                    array( "hour" => 17, "enabled" => true),
-                                    array( "hour" => 18, "enabled" => true),
-                                    array( "hour" => 19, "enabled" => true),
-                                    array( "hour" => 20, "enabled" => true),
-                                    array( "hour" => 21, "enabled" => true)
-                                )
-                            )
-
-                        ]);
-
-                        $OfferResult = $response->json(); 
-
-                        if($OfferResult['status'] === 'Error')
+                        if($is_new === true)
                         {
-                            $uploadErrors[$row]['offers'] = $OfferResult['message'];
+                            $ad_campaign_id = $result['response']['created'];
+                        
+                        /*
+                        else
+                        {
+                            $offerResponse = Http::get('https://login.myadcampaigns.com/admin/api/OfferNew/'.$column[0], ['token' => $token]);
+                            $body2 = $offerResponse->json(); 
+                            $data2 = (array) $body2['response'];
+                            $advertiser_id = $data2[0]['id'];
+                        }
+                        */
+                        
+                        ////make offer call with ad_campaign_ID
+                            $response = Http::post('https://login.myadcampaigns.com/admin/api/OfferNew?token='.$token.'', [
+                                'ad_campaign_id'  => $ad_campaign_id,
+                                'name'  => $column[8],
+                                'is_active'  => $is_offer_active,
+                                'bid' => floatval($column[10]), //ENUM [Evenly,ASAP]
+                                'Ad' => array(
+                                    'mode' => 'REPLACE',
+                                    'create' => array(
+                                            'title' => $column[10], //string
+                                            'desc' => $column[11], //string
+                                            'display' => $column[12], //string
+                                            'dest_url'=> $column[13]
+                                        )
+                                ),
+                                'Location' => array(
+                                    'mode' => 'REPLACE',
+                                    'edit' => array(
+                                        'countries' => $countryCodes,
+                                        'states' => $stateCodes,
+                                        'cities' => $cityCodes,
+                                        'enabled' => true
+                                    )
+                                ),
+                                'TimePeriod' => array(
+                                    'mode' => 'REPLACE',
+                                    'edit' => array(
+                                        array( "hour" => 4, "enabled" => true),
+                                        array( "hour" => 5, "enabled" => true),
+                                        array( "hour" => 6, "enabled" => true),
+                                        array( "hour" => 7, "enabled" => true),
+                                        array( "hour" => 8, "enabled" => true),
+                                        array( "hour" => 9, "enabled" => true),
+                                        array( "hour" => 10, "enabled" => true),
+                                        array( "hour" => 11, "enabled" => true),
+                                        array( "hour" => 12, "enabled" => true),
+                                        array( "hour" => 13, "enabled" => true),
+                                        array( "hour" => 14, "enabled" => true),
+                                        array( "hour" => 15, "enabled" => true),
+                                        array( "hour" => 16, "enabled" => true),
+                                        array( "hour" => 17, "enabled" => true),
+                                        array( "hour" => 18, "enabled" => true),
+                                        array( "hour" => 19, "enabled" => true),
+                                        array( "hour" => 20, "enabled" => true),
+                                        array( "hour" => 21, "enabled" => true)
+                                    )
+                                )
 
-                            //$offerError[$row] = array('campaign' => $column[0], 'error' => $OfferResult->message);
+                            ]);
+
+                            $OfferResult = $response->json(); 
+
+                            if($OfferResult['status'] === 'Error')
+                            {
+                                $uploadErrors[$row]['offers'] = $OfferResult['message'];
+
+                                //$offerError[$row] = array('campaign' => $column[0], 'error' => $OfferResult->message);
+                            }
                         }
                     }
                 }
@@ -452,9 +534,10 @@ class AdKernalController extends Controller
                 $row++;
             }  
 
-            $html = '<h1>Error Report</h1>';
+            $html = '';
             if(!empty($uploadErrors))
             {
+                $html .= '<h1>Error Report</h1>';
                 $html .= '<table class="table align-items-center"><thead class="thead-light"><tr><th scope="col">Row Number</th><th scope="col">Campaign Error</th><th scope="col">Offer Error<th scope="col">Invalid States</th><th scope="col">Invalid Cities</th></thead><tbody class="list">';
                     foreach($uploadErrors AS $key => $value)
                     {

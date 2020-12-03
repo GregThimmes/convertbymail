@@ -32,7 +32,7 @@
                 <div class="alert alert-default" role="alert">
                   <p>Use the following upload tool to upload the provided template.  The upload will return a success message or a row by row error message.   Do not try to re-upload the same file, as you will get duplicate campaigns inserted.</p>
           
-                  <a href="{{ asset('assets') }}/bulk_template_11032020.csv" target="_blank" class="btn btn-icon btn-3 btn-warning">
+                  <a href="{{ asset('assets') }}/bulk_template.csv" target="_blank" class="btn btn-icon btn-3 btn-warning">
                     <span class="btn-inner--text">Download Template</span>
                   </a>
                 </div>
@@ -48,7 +48,7 @@
                 <div class="col-4">
                   <h5 class="h3 mb-0">Recent Updates</h5>
                   <ul class="mt-4">
-                      <li><strong>Nov 16th, 2020</strong> - Updated upload to prevent duplicate campaign names to be uploaded.</li>
+                      <li><strong>Dec 2nd, 2020</strong> - Upload template has been updated to include campaign id column.  You can now bulk upload new and existing campaigns.   Existing campaigns will ignore all Offer fields.</li>
                   </ul>
                 </div>
               </div>

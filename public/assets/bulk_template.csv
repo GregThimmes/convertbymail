@@ -1,0 +1,2 @@
+campaign_id,campaign_name,campaign_budget_total,campaign_budget_daily,campaign_budget_limiter_type,campaign_is_active,campaign_start_date,campaign_end_date,offer_name,offer_active,offer_bid,ad_title,ad_desc,ad_display,ad_destination_url,countries,states,cities,dma
+,DMA TEST 1,100,10,EVENLY,0,10/9/20,10/24/20,Test Offer,0,0.01,Test Ad Title 1,Test my test mr testerson,staycationmedia.com,http://www.staycationmedia.com?utm_source=MACAPI,us,,"wilmington,de|milford,de|bethany beach,de",504|505
