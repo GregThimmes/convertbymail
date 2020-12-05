@@ -280,7 +280,7 @@ class AdKernalController extends Controller
                     }
                     $is_campaign_active = true;
                     $is_offer_active = true;
-                    $country = $column[14];
+                    $country = $column[15];
                     $countryCodes = array('us');
                     $stateCodes = array();
                     $cityCodes = array();
@@ -288,11 +288,11 @@ class AdKernalController extends Controller
                     if($is_new === true)
                     {
 
-                        if($column[17] != '')
+                        if($column[18] != '')
                         {
                             $dma_file = file_get_contents(storage_path('json/dma.json'));
                             $json_dma = json_decode($dma_file, true);
-                            $dmaX = explode('|', $column['17']);
+                            $dmaX = explode('|', $column['18']);
 
                             $dma = array();
                             foreach($dmaX AS $key => $value)
@@ -336,12 +336,11 @@ class AdKernalController extends Controller
                             }
                         }
 
-                        if($column[16] != '')
+                        if($column[17] != '')
                         { 
-                            $cities = explode('|', $column[16]);
+                            $cities = explode('|', $column[17]);
                             foreach($cities AS $key => $value)
                             {   
-                                $string = explode(',', $value);
                                 $iso = trim(strtolower($string[1]));
                                 
                                 if(isset($json_states[0][$country][$iso]))
@@ -365,16 +364,16 @@ class AdKernalController extends Controller
                             }
                         }
 
-                        if($column[15] != '')
+                        if($column[16] != '')
                         {
-                            $states = rtrim($column[15], '|');
+                            $states = rtrim($column[16], '|');
                             $states = explode('|', $states);
                             foreach($states AS $key => $value)
                             {
                                 $iso = trim(strtolower($value));
-                                if(isset($json_regions[$country][$iso]))
+                                if(isset($json_states[0]['us'][$iso]))
                                 {
-                                    $stateCodes[] = $json_regions[$country][$iso];
+                                    $stateCodes[] = $json_states[0]['us'][$iso];
                                 }
                                 else
                                 {
@@ -478,10 +477,10 @@ class AdKernalController extends Controller
                                 'Ad' => array(
                                     'mode' => 'REPLACE',
                                     'create' => array(
-                                            'title' => $column[10], //string
-                                            'desc' => $column[11], //string
-                                            'display' => $column[12], //string
-                                            'dest_url'=> $column[13]
+                                            'title' => $column[11], //string
+                                            'desc' => $column[12], //string
+                                            'display' => $column[13], //string
+                                            'dest_url'=> $column[14]
                                         )
                                 ),
                                 'Location' => array(
