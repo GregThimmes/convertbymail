@@ -175,11 +175,8 @@ class AdKernalController extends Controller
 
                     $countries = '';
                     $states = '';
+                    $statesArray = array();
                     $cities = '';
-
-                    $geoStatesUS = file_get_contents(storage_path('json/GeoStatesUS.json'));
-                    $json_states = json_decode($geoStatesUS, true);
-
 
                     foreach($value2['Location']['value'] AS $value4)
                     {
@@ -188,6 +185,7 @@ class AdKernalController extends Controller
                         {
                             if($value4['enabled'] === true )
                             {
+                            
                                 $countries .= ''.$value4['id'].'|';
                             }
                             
@@ -195,7 +193,7 @@ class AdKernalController extends Controller
 
                         if($value4['type'] === 'STATE')
                         {
-                            $states .= ''.$value4['name'].'|';
+                            array_push($statesArray,$value4['name']);
                             
                         }
 
@@ -207,9 +205,22 @@ class AdKernalController extends Controller
                                 $cities .= ''.$value4['name'].','.$stateName.'|';
                             }
                         }
-                        
                     }
 
+                    if(!empty($statesArray))
+                    {
+                        $geoStatesUS = file_get_contents(storage_path('json/GeoStatesUS.json'));
+                        $json_states = json_decode($geoStatesUS, true); 
+                        foreach($json_states AS $key => $value5 )
+                        {   
+                            if(!in_array($value5['region'], $statesArray))
+                            {
+                                $states .= ''.$value5['region'].'|';
+                            }
+                        }
+                    }
+
+                    $states = rtrim($states, '|');
                     $row[$count]['countries'] = $countries;
                     $row[$count]['states'] = $states;
                     $row[$count]['cities'] = $cities;
