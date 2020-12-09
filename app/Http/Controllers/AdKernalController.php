@@ -265,6 +265,8 @@ class AdKernalController extends Controller
             $json_states = json_decode($states, true);
             $regions = file_get_contents(storage_path('json/GeoRegionByID.json'));
             $json_regions = json_decode($regions,true);
+            $cities = file_get_contents(storage_path('json/GeoCit'));
+            $json_cities = json_decode($cities,true);
 
             /*
             $states = array();
@@ -352,11 +354,11 @@ class AdKernalController extends Controller
                             $cities = explode('|', $column[17]);
                             foreach($cities AS $key => $value)
                             {   
-                                $iso = trim(strtolower($string[1]));
+                                $iso = trim(strtolower($value[1]));
                                 
                                 if(isset($json_states[0][$country][$iso]))
                                 {
-                                    $cityName = strtolower(trim($string[0]));
+                                    $cityName = strtolower(trim($value[0]));
                                     $stateID = $json_states[0][$country][$iso];
 
                                     if(isset($json_cities[$stateID][$cityName]))
