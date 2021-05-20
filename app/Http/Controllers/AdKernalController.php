@@ -526,7 +526,10 @@ class AdKernalController extends Controller
                                         array( "hour" => 18, "enabled" => true),
                                         array( "hour" => 19, "enabled" => true),
                                         array( "hour" => 20, "enabled" => true),
-                                        array( "hour" => 21, "enabled" => true)
+                                        array( "hour" => 21, "enabled" => true),
+                                        array( "hour" => 22, "enabled" => true),
+                                        array( "hour" => 23, "enabled" => true),
+                                        array( "hour" => 24, "enabled" => true)
                                     )
                                 )
 
